@@ -1,0 +1,106 @@
+import java.util.*;
+
+public class EmiCalc{
+
+    public static void main(String []args)
+    {
+        Scanner X = new Scanner(System.in);
+
+        double amount, rate, term, EMI;
+        int month, date;
+
+        System.out.print("Enter Loan Amount: ");
+        amount = X.nextFloat();
+
+        System.out.print("Enter Annual Interest Rate: ");
+        rate = X.nextFloat();
+
+        System.out.print("Enter Loan Term: ");
+        term = X.nextFloat();
+        System.out.println("enter the month ");
+        month =X.nextInt();
+        if(month>12)
+        {
+            System.out.println("invalid  month");
+        }
+        System.out.println("enter date");
+        date=X.nextInt();
+        if(date>31)
+        {
+            System.out.println("invalid date");
+        }
+        rate=rate/(12*100); /*one month interest*/
+        term=term*12; /*one month period*/
+
+
+
+        EMI=getEMI(rate,term,amount);
+        System.out.println(EMI);
+
+        int days= getDaysForFirstMonth(date,month);
+        System.out.println("remaining days"+days);
+        double DCF=0;
+        System.out.println("Date-month \t EMI \t\t\t\t Days \t\t\t  DF \t\t\t DCF");
+        System.out.println(date+"-"+month);
+        int j=0;
+        for(int i=0;i<term;i++)
+        {
+            double df=getDF(rate,days);
+            double DCF1=getDCF(df,EMI);
+            int month1=month+j;
+            date=3;
+            int days1= getDaysForFirstMonth(date,month1);
+            System.out.println(date+"-"+month1+"       "+EMI+" \t "+days+" \t "+df+"    "+DCF1);
+            days=days+days1;
+            DCF=DCF1+DCF;
+            j++;
+            if(month1==12)
+            {
+                month=1;
+                j=0;
+            }
+            System.out.println(j);
+        }
+        System.out.println("Loan Amount="+DCF);
+
+    }
+
+    public static Double getEMI(double rate, double time, double principal)
+    {
+        double emi;
+
+
+        emi= (principal*rate*Math.pow(1+rate,time))/(Math.pow(1+rate,time)-1);
+        return emi;
+    }
+    public static double getDF(double rate,double days)
+    {
+        double df=1/Math.pow((1+rate),days/365);
+        return df;
+    }
+    public static int getDaysForFirstMonth(int date,int month)
+    { int remaining;
+        if(month==1||month==3|| month==5||month==7||month==8||month==10||month==12)
+        {
+            System.out.println("31");
+            remaining=(31-date)+3;
+        }
+        else if (month==2)
+        {
+            System.out.println("28");
+            remaining=(28-date)+3;
+        }
+        else
+        {
+            System.out.println("30");
+            remaining=(30-date)+3;
+        }
+
+        return remaining;
+    }
+    public static double getDCF(double df,double EMI)
+    {
+        double DCF=EMI*df;
+        return DCF;
+    }
+    }
